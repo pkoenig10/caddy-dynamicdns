@@ -298,15 +298,18 @@ func (a App) lookupCurrentIPsFromDNS(domains map[string][]string) (domainTypeIPs
 					if _, ok := recMap[name]; !ok {
 						recMap[name] = make(map[string]net.IP)
 					}
+					a.logger.Info("Add recMap", zap.String("key1", name), zap.String("key2", r.Type), zap.String("value", ip.String()))
 					recMap[name][r.Type] = ip
 				} else {
 					a.logger.Error("invalid IP address found in current DNS record", zap.String("value", r.Value), zap.String("type", r.Type))
 				}
 			}
+
 			for _, n := range names {
 				name := joinDomainZone(n, zone)
 				ips := make(map[string][]net.IP)
 				for _, t := range types {
+					a.logger.Info("Lookup recMap", zap.String("key1", name), zap.String("key2", t))
 					if ip, ok := recMap[name][t]; ok {
 						ips[t] = []net.IP{ip}
 					} else {
